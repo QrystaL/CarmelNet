@@ -1,0 +1,2242 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Cs.Wapi.Web Api 1",
+        "description": "The Carmel Solutions Web Api.",
+        "termsOfService": "https://www.carmelsolutions.com/terms",
+        "contact": {
+            "name": "Carmel Solutions",
+            "url": "https://www.carmelsolutions.com/",
+            "email": "support@carmelsolutions.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1"
+    },
+    "servers": [
+        {
+            "url": "https://api.carmelsolutions.com",
+            "description": "Production server (uses live data)"
+        },
+        {
+            "url": "https://api-sandbox.carmelsolutions.com",
+            "description": "Production Sandbox server (uses live data)"
+        }
+    ],
+    "paths": {
+        "/api/v1/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "List Events",
+                "description": "Get a list of events",
+                "parameters": [
+                    {
+                        "name": "eventType",
+                        "in": "query",
+                        "description": "Type of event to search for",
+                        "schema": {
+                            "$ref": "#/components/schemas/EventType"
+                        },
+                        "example": "approvalRequired"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Lower-bound date (inclusive)",
+                        "schema": {
+                            "type": "string",
+                            "example": "2021-06-18T16:07:12.1100000Z"
+                        },
+                        "example": "2021-06-18T16:07:12.1100000Z"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "Upper-bound date (inclusive)",
+                        "schema": {
+                            "type": "string",
+                            "example": "2021-06-18T16:07:12.1100000Z"
+                        },
+                        "example": "2021-06-18T16:07:12.1100000Z"
+                    },
+                    {
+                        "name": "pageNumber",
+                        "in": "query",
+                        "description": "The page number of the search results to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "example": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "The number of search results per page",
+                        "schema": {
+                            "maximum": 100,
+                            "minimum": 10,
+                            "type": "integer",
+                            "format": "int32",
+                            "example": 50
+                        },
+                        "example": 50
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchEventsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/health-checks/is-healthy": {
+            "get": {
+                "tags": [
+                    "HealthChecks"
+                ],
+                "summary": "Get Health",
+                "description": "Get health result",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/origination-accounts": {
+            "get": {
+                "tags": [
+                    "OriginationAccounts"
+                ],
+                "summary": "List Origination Accounts",
+                "description": "Get a list of all origination accounts",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetOriginationAccountsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/origination-accounts/{accountId}": {
+            "get": {
+                "tags": [
+                    "OriginationAccounts"
+                ],
+                "summary": "Get Origination Account",
+                "description": "Get a single origination account",
+                "parameters": [
+                    {
+                        "name": "accountId",
+                        "in": "path",
+                        "description": "Origination account identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetOriginationAccountResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/origination-institutions": {
+            "get": {
+                "tags": [
+                    "OriginationInstitutions"
+                ],
+                "summary": "List Origination Institutions",
+                "description": "Get list of all origination institutions",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetOriginationInstitutionsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/origination-institutions/{institutionId}": {
+            "get": {
+                "tags": [
+                    "OriginationInstitutions"
+                ],
+                "summary": "Get Origination Institution",
+                "description": "Get a single origination institution",
+                "parameters": [
+                    {
+                        "name": "institutionId",
+                        "in": "path",
+                        "description": "Origination institution identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetOriginationInstitutionsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/payment-orders": {
+            "post": {
+                "tags": [
+                    "PaymentOrders"
+                ],
+                "summary": "Create Payment Order",
+                "description": "Create a new payment order",
+                "parameters": [
+                    {
+                        "name": "idempotency-Key",
+                        "in": "header",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePaymentOrder"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePaymentOrder"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePaymentOrder"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePaymentOrder"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreatePaymentOrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "PaymentOrders"
+                ],
+                "summary": "List Payment Orders",
+                "description": "Get a list of payment orders",
+                "parameters": [
+                    {
+                        "name": "paymentOrderStatus",
+                        "in": "query",
+                        "description": "Status of payment order to search for",
+                        "schema": {
+                            "$ref": "#/components/schemas/OrderStatus"
+                        },
+                        "example": "approved"
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Lower-bound date (inclusive)",
+                        "schema": {
+                            "type": "string",
+                            "example": "2021-06-18T16:07:12.1100000Z"
+                        },
+                        "example": "2021-06-18T16:07:12.1100000Z"
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "Upper-bound date (inclusive)",
+                        "schema": {
+                            "type": "string",
+                            "example": "2021-06-18T16:07:12.1100000Z"
+                        },
+                        "example": "2021-06-18T16:07:12.1100000Z"
+                    },
+                    {
+                        "name": "pageNumber",
+                        "in": "query",
+                        "description": "Page number of the search results to return",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "example": 1
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pageSize",
+                        "in": "query",
+                        "description": "Number of search results per page",
+                        "schema": {
+                            "maximum": 100,
+                            "minimum": 10,
+                            "type": "integer",
+                            "format": "int32",
+                            "example": 50
+                        },
+                        "example": 50
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SearchPaymentOrdersResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/payment-orders/{paymentOrderId}": {
+            "get": {
+                "tags": [
+                    "PaymentOrders"
+                ],
+                "summary": "Get Payment Order",
+                "description": "Get a single payment order",
+                "parameters": [
+                    {
+                        "name": "paymentOrderId",
+                        "in": "path",
+                        "description": "Payment order identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPaymentOrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "PaymentOrders"
+                ],
+                "summary": "Update Payment Order",
+                "description": "Update a single payment order",
+                "parameters": [
+                    {
+                        "name": "paymentOrderId",
+                        "in": "path",
+                        "description": "Payment order identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChangePaymentOrderResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbidResult"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/templates/payment-order": {
+            "get": {
+                "tags": [
+                    "Templates"
+                ],
+                "summary": "Get Payment Order JSON template",
+                "description": "Get a Payment Order JSON template",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PaymentOrderType"
+                        }
+                    },
+                    {
+                        "name": "forFurtherFunding",
+                        "in": "query",
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPaymentOrderTemplateResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/templates/web-hook": {
+            "get": {
+                "tags": [
+                    "Templates"
+                ],
+                "summary": "Get WebHook Subscriber JSON template",
+                "description": "Get a WebHook Subscriber JSON template",
+                "parameters": [
+                    {
+                        "name": "request",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/GetWebHookSubscriberTemplate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetPaymentOrderTemplateResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/web-hooks": {
+            "post": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Create WebHook Subscriber",
+                "description": "Create a new WebHook subscriber",
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSubscriber"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSubscriber"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSubscriber"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSubscriber"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CreateSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Get WebHook Subscribers",
+                "description": "Get all WebHook subscriber",
+                "parameters": [
+                    {
+                        "name": "request",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/GetSubscribers"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/web-hooks/{subscriberId}": {
+            "patch": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Update WebHook Subscriber",
+                "description": "Update a single WebHook subscriber",
+                "parameters": [
+                    {
+                        "name": "subscriberId",
+                        "in": "path",
+                        "description": "Subscriber identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json-patch+json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Operation"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChangeSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ForbidResult"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Delete WebHook Subscriber",
+                "description": "Delete a single WebHook subscriber",
+                "parameters": [
+                    {
+                        "name": "subscriberId",
+                        "in": "path",
+                        "description": "Subscriber identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeleteSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Get WebHook Subscriber",
+                "description": "Get a single WebHook subscriber",
+                "parameters": [
+                    {
+                        "name": "subscriberId",
+                        "in": "path",
+                        "description": "Subscriber identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/web-hooks/{subscriberId}/secret": {
+            "get": {
+                "tags": [
+                    "WebHooks"
+                ],
+                "summary": "Get WebHook Subscriber secret",
+                "description": "Get the secret for a WebHook subscriber",
+                "parameters": [
+                    {
+                        "name": "subscriberId",
+                        "in": "path",
+                        "description": "Subscriber identifier",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                        },
+                        "example": "f3389c5b-a7d4-4dcb-8dbd-e8e9d8332dbb"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetSubscriberResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundResult"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AccountType": {
+                "enum": [
+                    "checking",
+                    "savings"
+                ],
+                "type": "string"
+            },
+            "AuthenticationProperties": {
+                "type": "object",
+                "properties": {
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "additionalProperties": {},
+                        "nullable": true
+                    },
+                    "isPersistent": {
+                        "type": "boolean"
+                    },
+                    "redirectUri": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "issuedUtc": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "expiresUtc": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "allowRefresh": {
+                        "type": "boolean",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ChangePaymentOrderResponse": {
+                "type": "object",
+                "properties": {
+                    "paymentOrder": {
+                        "$ref": "#/components/schemas/PaymentOrder"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ChangeSubscriberResponse": {
+                "type": "object",
+                "properties": {
+                    "subscriber": {
+                        "$ref": "#/components/schemas/WebHookSubscriber"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CorrectedData": {
+                "type": "object",
+                "properties": {
+                    "accountNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "routingNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "transactionCode": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CorrectionCode": {
+                "enum": [
+                    "C01",
+                    "C02",
+                    "C03",
+                    "C05",
+                    "C06",
+                    "C07"
+                ],
+                "type": "string"
+            },
+            "CorrectionDetail": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "$ref": "#/components/schemas/CorrectionCode"
+                    },
+                    "correctedData": {
+                        "$ref": "#/components/schemas/CorrectedData"
+                    },
+                    "dateCorrected": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CreatePaymentOrder": {
+                "required": [
+                    "amount",
+                    "direction",
+                    "effectiveDate",
+                    "originationAccountId",
+                    "receivingAccount",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "description": "Amount to transfer (cents)",
+                        "format": "int32"
+                    },
+                    "effectiveDate": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Date intended to settle"
+                    },
+                    "originationAccountId": {
+                        "type": "string",
+                        "description": "The associated origination account identifier",
+                        "format": "uuid"
+                    },
+                    "supplementalData": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        },
+                        "description": "Data to be supplied at the direction of Carmel Solutions",
+                        "nullable": true
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/PaymentOrderType"
+                    },
+                    "direction": {
+                        "$ref": "#/components/schemas/PaymentOrderDirection"
+                    },
+                    "receivingAccount": {
+                        "$ref": "#/components/schemas/PaymentAccount"
+                    },
+                    "subType": {
+                        "$ref": "#/components/schemas/PaymentOrderSubType"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CreatePaymentOrderResponse": {
+                "type": "object",
+                "properties": {
+                    "paymentOrder": {
+                        "$ref": "#/components/schemas/PaymentOrder"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CreateSubscriber": {
+                "required": [
+                    "endpointUrl",
+                    "events"
+                ],
+                "type": "object",
+                "properties": {
+                    "endpointUrl": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Subscription webhook endpoint"
+                    },
+                    "events": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WebHookEvent"
+                        },
+                        "description": "Subscribed webhook event definitions"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CreateSubscriberResponse": {
+                "type": "object",
+                "properties": {
+                    "subscriber": {
+                        "$ref": "#/components/schemas/WebHookSubscriber"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "DeleteSubscriberResponse": {
+                "type": "object",
+                "properties": {
+                    "subscriber": {
+                        "$ref": "#/components/schemas/WebHookSubscriber"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "EventBase": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The identifier of the event",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "dateCreated": {
+                        "type": "string",
+                        "description": "Date created",
+                        "nullable": true
+                    },
+                    "dateModified": {
+                        "type": "string",
+                        "description": "Date last modified",
+                        "nullable": true
+                    },
+                    "datePublished": {
+                        "type": "string",
+                        "description": "Date a WebHook Message was published for this event",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Descriptive information",
+                        "nullable": true
+                    },
+                    "paymentOrder": {
+                        "$ref": "#/components/schemas/PaymentOrderDetail"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/EventType"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "EventType": {
+                "enum": [
+                    "approvalRequired",
+                    "approved",
+                    "cancelled",
+                    "corrected",
+                    "failed",
+                    "remitted",
+                    "returned",
+                    "sent"
+                ],
+                "type": "string"
+            },
+            "FailureData": {
+                "type": "object",
+                "properties": {
+                    "priorPaymentOrderId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "FailureDetail": {
+                "type": "object",
+                "properties": {
+                    "failureData": {
+                        "$ref": "#/components/schemas/FailureData"
+                    },
+                    "dateFailed": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ForbidResult": {
+                "type": "object",
+                "properties": {
+                    "authenticationSchemes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "properties": {
+                        "$ref": "#/components/schemas/AuthenticationProperties"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetOriginationAccountResponse": {
+                "type": "object",
+                "properties": {
+                    "originationAccount": {
+                        "$ref": "#/components/schemas/OriginationAccount"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetOriginationAccountsResponse": {
+                "type": "object",
+                "properties": {
+                    "originationAccounts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OriginationAccount"
+                        },
+                        "description": "Origination accounts",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetOriginationInstitutionsResponse": {
+                "type": "object",
+                "properties": {
+                    "originationInstitutions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OriginationInstitution"
+                        },
+                        "description": "Origination institutions",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetPaymentOrderResponse": {
+                "type": "object",
+                "properties": {
+                    "paymentOrder": {
+                        "$ref": "#/components/schemas/PaymentOrder"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetPaymentOrderTemplateResponse": {
+                "type": "object",
+                "properties": {
+                    "paymentOrder": {
+                        "$ref": "#/components/schemas/PaymentOrder"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetSubscriberResponse": {
+                "type": "object",
+                "properties": {
+                    "subscriber": {
+                        "$ref": "#/components/schemas/WebHookSubscriber"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetSecretResponse": {
+                "type": "object",
+                "properties": {
+                    "secret": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetSubscribers": {
+                "type": "object",
+                "additionalProperties": false
+            },
+            "GetWebHookSubscriberTemplate": {
+                "type": "object",
+                "additionalProperties": false
+            },
+            "NotFoundResult": {
+                "type": "object",
+                "properties": {
+                    "statusCode": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "Operation": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "op": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "from": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OrderStatus": {
+                "enum": [
+                    "approvalRequired",
+                    "approved",
+                    "cancelled",
+                    "failed",
+                    "returned",
+                    "sent"
+                ],
+                "type": "string"
+            },
+            "OriginationAccount": {
+                "type": "object",
+                "properties": {
+                    "accountNumber": {
+                        "type": "string",
+                        "description": "Financial institution-defined account number",
+                        "nullable": true
+                    },
+                    "achEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether this origination account can be used for ACH"
+                    },
+                    "achCreditEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether this origination account can be used for ACH credit payment orders"
+                    },
+                    "achDebitEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether this origination account can be used for ACH debit payment orders"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The identifier",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Descriptive name",
+                        "nullable": true
+                    },
+                    "originationInstitution": {
+                        "$ref": "#/components/schemas/OriginationInstitution"
+                    },
+                    "outboundCompanyName": {
+                        "type": "string",
+                        "description": "Descriptive Name for destination bank statement",
+                        "nullable": true
+                    },
+                    "routingNumber": {
+                        "type": "string",
+                        "description": "ACH routing number",
+                        "nullable": true
+                    },
+                    "sameDayCreditEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether same day credit operations are enabled"
+                    },
+                    "sameDayDebitEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether same day debit operations are enabled"
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "The current status",
+                        "nullable": true
+                    },
+                    "supplementalDataKeys": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "JSON object keys accepted in the supplemental data of a payment order",
+                        "nullable": true
+                    },
+                    "wireEnabled": {
+                        "type": "boolean",
+                        "description": "Indicates whether this origination account can be used for wire payment orders"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "OriginationInstitution": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The identifier",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Descriptive name",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PagingInfo": {
+                "required": [
+                    "pageNumber",
+                    "pageSize"
+                ],
+                "type": "object",
+                "properties": {
+                    "pageNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pageSize": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalPages": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "totalResults": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PaymentAccount": {
+                "required": [
+                    "accountNumber",
+                    "name",
+                    "routingNumber"
+                ],
+                "type": "object",
+                "properties": {
+                    "accountNumber": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Financial institution account number"
+                    },
+                    "address1": {
+                        "type": "string",
+                        "description": "Address line 1 of the person or company receiving the payment order",
+                        "nullable": true
+                    },
+                    "address2": {
+                        "type": "string",
+                        "description": "Address line 2 of the person or company receiving the payment order",
+                        "nullable": true
+                    },
+                    "address3": {
+                        "type": "string",
+                        "description": "Address line 3 of the person or company receiving the payment order",
+                        "nullable": true
+                    },
+                    "finalCreditInfo1": {
+                        "type": "string",
+                        "description": "Wire final credit info line 1",
+                        "nullable": true
+                    },
+                    "finalCreditInfo2": {
+                        "type": "string",
+                        "description": "Wire final credit info line 2",
+                        "nullable": true
+                    },
+                    "finalCreditInfo3": {
+                        "type": "string",
+                        "description": "Wire final credit info line 3",
+                        "nullable": true
+                    },
+                    "finalCreditInfo4": {
+                        "type": "string",
+                        "description": "Wire final credit info line 4",
+                        "nullable": true
+                    },
+                    "name": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Account holder name"
+                    },
+                    "routingNumber": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Financial institution routing number"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/AccountType"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PaymentOrder": {
+                "required": [
+                    "amount",
+                    "direction",
+                    "effectiveDate",
+                    "originationAccountId",
+                    "receivingAccount",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "description": "Amount to transfer (cents)",
+                        "format": "int32"
+                    },
+                    "corrections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CorrectionDetail"
+                        },
+                        "description": "Processing Corrections",
+                        "nullable": true
+                    },
+                    "dateCreated": {
+                        "type": "string",
+                        "description": "Date created",
+                        "nullable": true
+                    },
+                    "dateModified": {
+                        "type": "string",
+                        "description": "Date last modified",
+                        "nullable": true
+                    },
+                    "direction": {
+                        "$ref": "#/components/schemas/PaymentOrderDirection"
+                    },
+                    "effectiveDate": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Date intended to settle"
+                    },
+                    "failure": {
+                        "$ref": "#/components/schemas/FailureDetail"
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "The identifier",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "originationAccountId": {
+                        "type": "string",
+                        "description": "The associated origination account identifier",
+                        "format": "uuid"
+                    },
+                    "processingData": {
+                        "$ref": "#/components/schemas/ProcessingData"
+                    },
+                    "receivingAccount": {
+                        "$ref": "#/components/schemas/PaymentAccount"
+                    },
+                    "remittanceHistory": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RemitDetail"
+                        },
+                        "description": "Processing Remittance History",
+                        "nullable": true
+                    },
+                    "return": {
+                        "$ref": "#/components/schemas/ReturnDetail"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/OrderStatus"
+                    },
+                    "subType": {
+                        "$ref": "#/components/schemas/PaymentOrderSubType"
+                    },
+                    "supplementalData": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "nullable": true
+                        },
+                        "description": "Custom data to be supplied at the direction of Carmel Solutions",
+                        "nullable": true
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/PaymentOrderType"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PaymentOrderDetail": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "PaymentOrderDirection": {
+                "enum": [
+                    "debit",
+                    "credit"
+                ],
+                "type": "string"
+            },
+            "PaymentOrderSubType": {
+                "enum": [
+                    "PPD",
+                    "TEL",
+                    "WEB",
+                    "CCD"
+                ],
+                "type": "string"
+            },
+            "PaymentOrderType": {
+                "enum": [
+                    "ACH",
+                    "Wire"
+                ],
+                "type": "string"
+            },
+            "ProblemDetails": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "detail": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "instance": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": {}
+            },
+            "ProcessingData": {
+                "type": "object",
+                "properties": {
+                    "runName": {
+                        "type": "string",
+                        "description": "Name of the run",
+                        "nullable": true
+                    },
+                    "traceNumber": {
+                        "type": "string",
+                        "description": "Trace number of the payment order",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "RemitDetail": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "description": "Amount remitted (cents)",
+                        "format": "int32"
+                    },
+                    "effectiveDate": {
+                        "type": "string",
+                        "description": "Date intended to settle",
+                        "nullable": true
+                    },
+                    "processedDate": {
+                        "type": "string",
+                        "description": "Date processed in Carmel's system",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ReturnDetail": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dateReturned": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SearchEventsResponse": {
+                "type": "object",
+                "properties": {
+                    "pagingInfo": {
+                        "$ref": "#/components/schemas/PagingInfo"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EventBase"
+                        },
+                        "description": "Events",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SearchPaymentOrdersResponse": {
+                "type": "object",
+                "properties": {
+                    "pagingInfo": {
+                        "$ref": "#/components/schemas/PagingInfo"
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PaymentOrder"
+                        },
+                        "description": "Payment orders",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ValidationError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Validation error message",
+                        "nullable": true
+                    },
+                    "detail": {
+                        "type": "string",
+                        "description": "Validation error detail",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ValidationErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "description": "Validation errors",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "WebHookEvent": {
+                "enum": [
+                    "paymentOrder_approvalRequired",
+                    "paymentOrder_approved",
+                    "paymentOrder_cancelled",
+                    "paymentOrder_corrected",
+                    "paymentOrder_failed",
+                    "paymentOrder_remitted",
+                    "paymentOrder_returned",
+                    "paymentOrder_sent"
+                ],
+                "type": "string"
+            },
+            "WebHookSubscriber": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "The identifier",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "endpointUrl": {
+                        "type": "string",
+                        "description": "Subscription webhook endpoint",
+                        "nullable": true
+                    },
+                    "version": {
+                        "type": "integer",
+                        "description": "",
+                        "format": "int32"
+                    },
+                    "events": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WebHookEvent"
+                        },
+                        "description": "Subscribed webhook event definitions",
+                        "nullable": true
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/WebHookSubscriberStatus"
+                    },
+                    "dateCreated": {
+                        "type": "string",
+                        "description": "Date created",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "WebHookSubscriberStatus": {
+                "enum": [
+                    "active",
+                    "inactive"
+                ],
+                "type": "string"
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "description": "JWT Authorization header using the Bearer Scheme. Example: \"Authorization: Bearer {token}\"",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "security": [
+        {
+            "Bearer": [
+                "Bearer"
+            ]
+        }
+    ],
+    "x-readme": {
+        "explorer-enabled": true,
+        "proxy-enabled": true
+    }
+}
