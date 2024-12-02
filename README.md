@@ -14,3 +14,5 @@ Then to create payments, call: CarmelPayment.createCreditTransfer
 And to approve the payments, call: CarmelPayment.approveCreditTransfer
 
 See the unit-tests for examples.
+
+Nuget: https://www.nuget.org/packages/CarmelNet
