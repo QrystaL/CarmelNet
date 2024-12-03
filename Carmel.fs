@@ -3,6 +3,7 @@ namespace CarmelNet
 open System
 open System.Net.Http
 
+/// Carmel environments: Production and Sandbox
 [<RequireQualifiedAccess>]
 type CarmelEnvironment =
     | Sandbox
@@ -13,6 +14,7 @@ type CarmelEnvironment =
         | Sandbox -> "https://api-sandbox.carmelsolutions.com"
         | Production -> "https://api.carmelsolutions.com"
 
+/// Access token to carmel services
 [<RequireQualifiedAccess>]
 type CarmelAccessToken =
     | Token of string
@@ -76,6 +78,7 @@ type CarmelBankAccountType =
         | Checking -> "checking"
         | Savings -> "savings"
 
+/// Actions for status updates for payment order
 [<RequireQualifiedAccess>]
 type CarmelApprovalAction =
     /// Approve a payment order
@@ -250,6 +253,7 @@ module CarmelPayment =
 
     let scope = "/pay"
 
+    /// Get OAuth2 token for calling the services
     let getAcccessToken (env: CarmelEnvironment, clientId: string, clientSecret: string) =
         let carmelAuthHeader =
             [ "Authorization",
@@ -280,6 +284,7 @@ module CarmelPayment =
                     return failwith $"No access_token gotten {tokenResponse}"
         }
 
+    /// Gets company internal accounts
     let getOriginationAccounts (env: CarmelEnvironment, access_token: CarmelAccessToken) =
         let httpClient = makeHttpClient env access_token
         let client = JsonData.CarmelOpenApi.Client httpClient
@@ -366,6 +371,7 @@ module CarmelPayment =
     //            return ord.PaymentOrder
     //    }
 
+    /// Initiate a money transfer
     let createCreditTransfer
         (
             env: CarmelEnvironment,
@@ -460,6 +466,7 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
+    /// Get the status of a money transfer
     let fetchCreditTransfer (env: CarmelEnvironment, access_token: CarmelAccessToken, paymentOrderId: Guid) =
 
         let httpClient = makeHttpClient env access_token
@@ -488,6 +495,7 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
+    /// Get a list of money transfer transactions
     let fetchCreditTransfers
         (
             env: CarmelEnvironment,
@@ -564,6 +572,7 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
+    /// Change a money transfer from approval required to aproved (or cancelled)
     let approveCreditTransfer
         (
             env: CarmelEnvironment,
@@ -607,7 +616,7 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
-
+    /// Get list of events
     let fetchEvents
         (
             env: CarmelEnvironment,
@@ -678,11 +687,6 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
-
-    let parseWebhook (respose: string) =
-        let r = JsonData.WebhookResponse.Load(Serializer.Deserialize respose)
-        r
-
 module CarmelWebhooks =
 
     open Utils
@@ -690,6 +694,7 @@ module CarmelWebhooks =
     open FSharp.Data
     open FSharp.Data.JsonProvider
 
+    /// List of different types of webhooks
     let webhookEvents =
         [| "paymentOrder_approvalRequired"
            "paymentOrder_approved"
@@ -715,6 +720,7 @@ module CarmelWebhooks =
     //            return wr
     //    }
 
+    /// Register a webhook listener
     let createWebhookSubscription
         (
             env: CarmelEnvironment,
@@ -768,6 +774,7 @@ module CarmelWebhooks =
     //            return wr
     //    }
 
+    /// Remove a webhook listener
     let deleteWebhookSubscription (env: CarmelEnvironment, access_token: CarmelAccessToken, subscriberId: Guid) =
 
         let httpClient = makeHttpClient env access_token
@@ -813,7 +820,7 @@ module CarmelWebhooks =
     //            return wr
     //    }
 
-
+    /// Get a list of webhook listeners
     let getWebhookSubscriptions (env: CarmelEnvironment, access_token: CarmelAccessToken) =
 
         let httpClient = makeHttpClient env access_token
@@ -842,6 +849,7 @@ module CarmelWebhooks =
                 return Error(err, details)
         }
 
+    /// Fetch details of a webhook listener
     let getWebhookSubscription (env: CarmelEnvironment, access_token: CarmelAccessToken, subscriberId: Guid) =
 
         let httpClient = makeHttpClient env access_token
@@ -870,6 +878,7 @@ module CarmelWebhooks =
                 return Error(err, details)
         }
 
+    /// Get a webhook listener secret, that is used to calculate and verify the webhook svix signatures.
     let getWebhookSubscriptionSecret (env: CarmelEnvironment, access_token: CarmelAccessToken, subscriberId: Guid) =
 
         let authHeader =
@@ -912,3 +921,33 @@ module CarmelWebhooks =
 //            //printfn "Used signature: %s" signature_bodyhash_string
 //            return Error(err, details)
 //    }
+
+    /// Verifies the signature and parses the webhook response. Parameters:
+    /// acceptedToleranceHours: How old signatures are accepted. Notice possible time-zone differences.
+    /// webhookSecret you'll get with getWebhookSubscriptionSecret call.
+    /// response_content is the raw content of the POST request. Note: response_content has to be in raw response format, not pretty JSON.
+    /// Svix values are available in the message headers: svix-id svix-timestamp svix-signature
+    let parseWebhookResponse (acceptedToleranceHours:float, webhookSecret:string, response_content: string, svix_id:string, svix_timestamp:string, svix_signature:string) =
+
+        let isOk, timestampInt = Int64.TryParse svix_timestamp
+        if not isOk then failwith $"Webook response: Incorrect timestamp header format {svix_id}"
+        else
+        let timestamp = DateTimeOffset.FromUnixTimeSeconds timestampInt
+        if (DateTimeOffset.UtcNow - timestamp).TotalHours > acceptedToleranceHours then
+            failwith $"Webook response: Too old response time {svix_id}"
+        else
+
+        let content = $"{svix_id}.{svix_timestamp}.{response_content}" |> System.Text.Encoding.UTF8.GetBytes
+        let secretBytes = webhookSecret.Split('_').[1] |> Convert.FromBase64String
+
+        use hmacsha256 = new System.Security.Cryptography.HMACSHA256(secretBytes)
+        
+        let hash = hmacsha256.ComputeHash content
+
+        let base64Signature = Convert.ToBase64String hash
+
+        if not (svix_signature.Contains base64Signature) then
+            failwith $"Webhook response: Incorrect signature {svix_signature} in {svix_id}"
+        else
+        let r = JsonData.WebhookResponse.Load(Serializer.Deserialize response_content)
+        r

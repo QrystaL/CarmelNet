@@ -1,5 +1,8 @@
 module JsonData
 
+// The commented types here are, because the Carmel Open API schema file doesn't always 100% correspond to the actual implementation.
+// That's why there is a workaround possibility to use FSharp.Data instead of SwaggerProvider.
+
 //type OriginationAccountsResponse = FSharp.Data.JsonProvider<"""[{
 //    "originationAccounts": [
 //        {
@@ -168,235 +171,235 @@ module JsonData
 //}]""", SampleIsList=true>
 
 
-type PaymentOrderRequest =
-    FSharp.Data.JsonProvider<"""[{
-          "type": "ACH",
-          "direction": "debit",
-          "receivingAccount": {
-            "accountNumber": "asdf123",
-            "name": "mr test",
-            "routingNumber": "943012484"
-          },
-          "amount": 100,
-          "effectiveDate": "2024-01-01",
-          "originationAccountId": "asdf"
-        },{
-            "amount":12599,
-            "direction":"debit",
-            "effectiveDate": "2021-05-27",
-            "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
-            "receivingAccount": {
-                "accountNumber": "00-1234567",
-                "name": "Joe Customer",
-                "routingNumber": "074903719",
-                "type": "checking"
-            },  
-            "subType": "WEB",
-            "type": "ach"
-        },{
-            "amount":400000,
-            "direction":"credit",
-            "effectiveDate": "2021-05-27",
-            "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
-            "receivingAccount": {
-                "accountNumber": "00-1234567",
-                "name": "Joe Customer",
-                "address1": "15442 Smith Street",
-                "address2": "Apartment 44",
-                "address3": "Reno, NV 89443",
-                "routingNumber": "074903719"
-            },
-            "type": "wire"
-        },{
-           "amount":12599,
-           "direction":"debit",
-           "effectiveDate":"2021-05-27",
-           "originationAccountId":"27cd7c02-3bf4-4dd2-a0d7-0c4e3c8c91a9",
-           "receivingAccount":{
-              "accountNumber":"00-1234567",
-              "name":"Joe Customer",
-              "routingNumber":"074903719",
-              "type":"checking"
-           },
-           "subType":"WEB",
-           "supplementalData":{
-              "clientIdCode":"0014422",
-              "processGroup":"2021-green"
-           },
-           "type":"ach"
-        },{
-            "amount":12599,
-            "direction":"debit",
-            "effectiveDate": "2023-08-29",
-            "metadata": {
-                "frequency": "recurring",
-                "payment_id": 5112,
-                "program_type": "simple"
-            },
-            "originationAccountId": "023e5dee-3795-427d-9c2c-0e97e6199f96",
-            "receivingAccount": {
-                "accountNumber": "00-1234567",
-                "name": "Joe Customer",
-                "routingNumber": "074903719",
-                "type": "checking"
-            },
-            "subType": "WEB",
-            "type": "ACH"
-        }]""", SampleIsList=true>
+//type PaymentOrderRequest =
+//    FSharp.Data.JsonProvider<"""[{
+//          "type": "ACH",
+//          "direction": "debit",
+//          "receivingAccount": {
+//            "accountNumber": "asdf123",
+//            "name": "mr test",
+//            "routingNumber": "943012484"
+//          },
+//          "amount": 100,
+//          "effectiveDate": "2024-01-01",
+//          "originationAccountId": "asdf"
+//        },{
+//            "amount":12599,
+//            "direction":"debit",
+//            "effectiveDate": "2021-05-27",
+//            "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
+//            "receivingAccount": {
+//                "accountNumber": "00-1234567",
+//                "name": "Joe Customer",
+//                "routingNumber": "074903719",
+//                "type": "checking"
+//            },  
+//            "subType": "WEB",
+//            "type": "ach"
+//        },{
+//            "amount":400000,
+//            "direction":"credit",
+//            "effectiveDate": "2021-05-27",
+//            "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
+//            "receivingAccount": {
+//                "accountNumber": "00-1234567",
+//                "name": "Joe Customer",
+//                "address1": "15442 Smith Street",
+//                "address2": "Apartment 44",
+//                "address3": "Reno, NV 89443",
+//                "routingNumber": "074903719"
+//            },
+//            "type": "wire"
+//        },{
+//           "amount":12599,
+//           "direction":"debit",
+//           "effectiveDate":"2021-05-27",
+//           "originationAccountId":"27cd7c02-3bf4-4dd2-a0d7-0c4e3c8c91a9",
+//           "receivingAccount":{
+//              "accountNumber":"00-1234567",
+//              "name":"Joe Customer",
+//              "routingNumber":"074903719",
+//              "type":"checking"
+//           },
+//           "subType":"WEB",
+//           "supplementalData":{
+//              "clientIdCode":"0014422",
+//              "processGroup":"2021-green"
+//           },
+//           "type":"ach"
+//        },{
+//            "amount":12599,
+//            "direction":"debit",
+//            "effectiveDate": "2023-08-29",
+//            "metadata": {
+//                "frequency": "recurring",
+//                "payment_id": 5112,
+//                "program_type": "simple"
+//            },
+//            "originationAccountId": "023e5dee-3795-427d-9c2c-0e97e6199f96",
+//            "receivingAccount": {
+//                "accountNumber": "00-1234567",
+//                "name": "Joe Customer",
+//                "routingNumber": "074903719",
+//                "type": "checking"
+//            },
+//            "subType": "WEB",
+//            "type": "ACH"
+//        }]""", SampleIsList=true>
 
-type PaymentOrderResponse =
-    FSharp.Data.JsonProvider<"""[{
-            "paymentOrder": {
-                "amount": 12599,
-                "dateCreated": "2021-05-27T22:11:23.6399240Z",
-                "direction": "debit",
-                "effectiveDate": "2021-05-27",
-                "id": "19e82811-1f2d-4ce2-2eec-08d9213a29a5",
-                "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
-                "receivingAccount": {
-                    "accountNumber": "00-1234567",
-                    "name": "Joe Customer",
-                    "routingNumber": "074903719",
-                    "type": "checking"
-                },
-                "status": "approvalRequired",
-                "subType": "WEB",
-                "type": "ACH"
-            }
-        },{
-            "paymentOrder": {
-                "amount": 400000,
-                "dateCreated": "2021-05-27T22:11:25.6399240Z",
-                "direction": "credit",
-                "effectiveDate": "2021-05-27",
-                "id": "99988811-1f2d-4ce2-2eec-08d9213a29a5",
-                "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
-                "receivingAccount": {
-                    "accountNumber": "00-1234567",
-                    "name": "Joe Customer",
-                    "address1": "15442 Smith Street",
-                    "address2": "Apartment 44",
-                    "address3": "Reno, NV 89443",
-                    "routingNumber": "074903719"
-                },
-                "status": "approvalRequired",
-                "type": "wire"
-            }
-        },{
-            "paymentOrder": {
-                "amount": 12599,
-                "dateCreated": "2023-08-29T21:03:59.2000000Z",
-                "direction": "debit",
-                "effectiveDate": "2023-08-29",
-                "id": "19e82811-1f2d-4ce2-2eec-08d9213a29a5",
-                "metadata": {
-                    "billing_frequency": "recurring",
-                    "loan_id": "LOAN-A5",
-                    "payment_id": 5112,
-                    "program_type": "simple-plus"
-                },
-                "originationAccountId": "023e5dee-3795-427d-9c2c-0e97e6199f96",
-                "receivingAccount": {
-                    "accountNumber": "*567",
-                    "name": "Joe Customer",
-                    "routingNumber": "074903719",
-                    "type": "checking"
-                },
-                "status": "approvalRequired",
-                "subType": "WEB",
-                "type": "ACH"
-            }
-        },{
-          "paymentOrder": {
-            "amount": 0,
-            "corrections": [
-              {
-                "code": "C01",
-                "correctedData": {
-                  "accountNumber": "string",
-                  "routingNumber": "string",
-                  "transactionCode": "string"
-                },
-                "dateCorrected": "string",
-                "description": "string"
-              }
-            ],
-            "dateCreated": "string",
-            "dateModified": "string",
-            "direction": "debit",
-            "effectiveDate": "string",
-            "failure": {
-              "failureData": {
-                "priorPaymentOrderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-              },
-              "dateFailed": "string",
-              "description": "string"
-            },
-            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "originationAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "processingData": {
-              "runName": "string",
-              "traceNumber": "string"
-            },
-            "receivingAccount": {
-              "accountNumber": "string",
-              "address1": "string",
-              "address2": "string",
-              "address3": "string",
-              "finalCreditInfo1": "string",
-              "finalCreditInfo2": "string",
-              "finalCreditInfo3": "string",
-              "finalCreditInfo4": "string",
-              "name": "string",
-              "routingNumber": "string",
-              "type": "checking"
-            },
-            "remittanceHistory": [
-              {
-                "amount": 0,
-                "effectiveDate": "string",
-                "processedDate": "string"
-              }
-            ],
-            "return": {
-              "amount": 0,
-              "code": "string",
-              "dateReturned": "string",
-              "description": "string"
-            },
-            "status": "approvalRequired",
-            "subType": "PPD",
-            "supplementalData": {
-              "additionalProp": "string"
-            },
-            "type": "ACH"
-          }
-        },{
-              "type": "string",
-              "title": "string",
-              "status": 0,
-              "detail": "string",
-              "instance": "string"
-        },{
-          "errors": [
-            {
-              "message": "string",
-              "detail": "string"
-            }
-          ]
-        },{
-          "statusCode": 0
-        }]""", SampleIsList=true>
+//type PaymentOrderResponse =
+//    FSharp.Data.JsonProvider<"""[{
+//            "paymentOrder": {
+//                "amount": 12599,
+//                "dateCreated": "2021-05-27T22:11:23.6399240Z",
+//                "direction": "debit",
+//                "effectiveDate": "2021-05-27",
+//                "id": "19e82811-1f2d-4ce2-2eec-08d9213a29a5",
+//                "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
+//                "receivingAccount": {
+//                    "accountNumber": "00-1234567",
+//                    "name": "Joe Customer",
+//                    "routingNumber": "074903719",
+//                    "type": "checking"
+//                },
+//                "status": "approvalRequired",
+//                "subType": "WEB",
+//                "type": "ACH"
+//            }
+//        },{
+//            "paymentOrder": {
+//                "amount": 400000,
+//                "dateCreated": "2021-05-27T22:11:25.6399240Z",
+//                "direction": "credit",
+//                "effectiveDate": "2021-05-27",
+//                "id": "99988811-1f2d-4ce2-2eec-08d9213a29a5",
+//                "originationAccountId": "ab13be13-4036-4f9b-bffc-411e365a7d8b",
+//                "receivingAccount": {
+//                    "accountNumber": "00-1234567",
+//                    "name": "Joe Customer",
+//                    "address1": "15442 Smith Street",
+//                    "address2": "Apartment 44",
+//                    "address3": "Reno, NV 89443",
+//                    "routingNumber": "074903719"
+//                },
+//                "status": "approvalRequired",
+//                "type": "wire"
+//            }
+//        },{
+//            "paymentOrder": {
+//                "amount": 12599,
+//                "dateCreated": "2023-08-29T21:03:59.2000000Z",
+//                "direction": "debit",
+//                "effectiveDate": "2023-08-29",
+//                "id": "19e82811-1f2d-4ce2-2eec-08d9213a29a5",
+//                "metadata": {
+//                    "billing_frequency": "recurring",
+//                    "loan_id": "LOAN-A5",
+//                    "payment_id": 5112,
+//                    "program_type": "simple-plus"
+//                },
+//                "originationAccountId": "023e5dee-3795-427d-9c2c-0e97e6199f96",
+//                "receivingAccount": {
+//                    "accountNumber": "*567",
+//                    "name": "Joe Customer",
+//                    "routingNumber": "074903719",
+//                    "type": "checking"
+//                },
+//                "status": "approvalRequired",
+//                "subType": "WEB",
+//                "type": "ACH"
+//            }
+//        },{
+//          "paymentOrder": {
+//            "amount": 0,
+//            "corrections": [
+//              {
+//                "code": "C01",
+//                "correctedData": {
+//                  "accountNumber": "string",
+//                  "routingNumber": "string",
+//                  "transactionCode": "string"
+//                },
+//                "dateCorrected": "string",
+//                "description": "string"
+//              }
+//            ],
+//            "dateCreated": "string",
+//            "dateModified": "string",
+//            "direction": "debit",
+//            "effectiveDate": "string",
+//            "failure": {
+//              "failureData": {
+//                "priorPaymentOrderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+//              },
+//              "dateFailed": "string",
+//              "description": "string"
+//            },
+//            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+//            "originationAccountId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+//            "processingData": {
+//              "runName": "string",
+//              "traceNumber": "string"
+//            },
+//            "receivingAccount": {
+//              "accountNumber": "string",
+//              "address1": "string",
+//              "address2": "string",
+//              "address3": "string",
+//              "finalCreditInfo1": "string",
+//              "finalCreditInfo2": "string",
+//              "finalCreditInfo3": "string",
+//              "finalCreditInfo4": "string",
+//              "name": "string",
+//              "routingNumber": "string",
+//              "type": "checking"
+//            },
+//            "remittanceHistory": [
+//              {
+//                "amount": 0,
+//                "effectiveDate": "string",
+//                "processedDate": "string"
+//              }
+//            ],
+//            "return": {
+//              "amount": 0,
+//              "code": "string",
+//              "dateReturned": "string",
+//              "description": "string"
+//            },
+//            "status": "approvalRequired",
+//            "subType": "PPD",
+//            "supplementalData": {
+//              "additionalProp": "string"
+//            },
+//            "type": "ACH"
+//          }
+//        },{
+//              "type": "string",
+//              "title": "string",
+//              "status": 0,
+//              "detail": "string",
+//              "instance": "string"
+//        },{
+//          "errors": [
+//            {
+//              "message": "string",
+//              "detail": "string"
+//            }
+//          ]
+//        },{
+//          "statusCode": 0
+//        }]""", SampleIsList=true>
 
-type PaymentOrderApprovalRequest =
-    FSharp.Data.JsonProvider<"""[{
-        "value": "approved",
-        "path": "/status",
-        "op": "replace"
-    },{
-        "value": "remove",
-        "path": "/status"
-    }]""", SampleIsList=true>
+//type PaymentOrderApprovalRequest =
+//    FSharp.Data.JsonProvider<"""[{
+//        "value": "approved",
+//        "path": "/status",
+//        "op": "replace"
+//    },{
+//        "value": "remove",
+//        "path": "/status"
+//    }]""", SampleIsList=true>
 
 type WebhookResponse =
     FSharp.Data.JsonProvider<"""[{
@@ -491,114 +494,114 @@ type WebhookResponse =
           "type": "cancelled"
         }]""", SampleIsList=true>
 
-type SimulationReturnCode =
-    FSharp.Data.JsonProvider<"""[{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "R01",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    },{
-        "amount": 10000, 
-        "direction": "credit",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "return",
-            "name": "Luke Skywalker",
-            "address1": "15442 Smith Street",
-            "address2": "Apartment 44",
-            "address3": "Reno, NV 89443",        
-            "routingNumber": "074903719"
-        },
-        "type": "Wire"
-    },{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "C01",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    },{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "uncorrected",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    },{
-        "amount": 10000, 
-        "direction": "credit",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "uncorrected",
-            "name": "Luke Skywalker",
-            "address1": "15442 Smith Street",
-            "address2": "Apartment 44",
-            "address3": "Reno, NV 89443",        
-            "routingNumber": "074903719"
-        },
-        "type": "Wire"
-    },{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "remit",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    },{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "returnremit",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    },{
-        "amount": 10000, 
-        "direction": "DEBIT",
-        "effectiveDate": "2022-03-25",
-        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
-        "receivingAccount": {
-            "accountNumber": "remitreturn",
-            "name": "Luke Skywalker",
-            "routingNumber": "074903719",
-            "type": "Checking"
-        },
-        "subType": "PPD",
-        "type": "ACH"
-    }]""", SampleIsList=true>
+//type SimulationReturnCode =
+//    FSharp.Data.JsonProvider<"""[{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "R01",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    },{
+//        "amount": 10000, 
+//        "direction": "credit",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "return",
+//            "name": "Luke Skywalker",
+//            "address1": "15442 Smith Street",
+//            "address2": "Apartment 44",
+//            "address3": "Reno, NV 89443",        
+//            "routingNumber": "074903719"
+//        },
+//        "type": "Wire"
+//    },{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "C01",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    },{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "uncorrected",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    },{
+//        "amount": 10000, 
+//        "direction": "credit",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "uncorrected",
+//            "name": "Luke Skywalker",
+//            "address1": "15442 Smith Street",
+//            "address2": "Apartment 44",
+//            "address3": "Reno, NV 89443",        
+//            "routingNumber": "074903719"
+//        },
+//        "type": "Wire"
+//    },{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "remit",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    },{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "returnremit",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    },{
+//        "amount": 10000, 
+//        "direction": "DEBIT",
+//        "effectiveDate": "2022-03-25",
+//        "originationAccountId": "6cdcee8e-7f13-4672-9e33-2ed615cd7b07",
+//        "receivingAccount": {
+//            "accountNumber": "remitreturn",
+//            "name": "Luke Skywalker",
+//            "routingNumber": "074903719",
+//            "type": "Checking"
+//        },
+//        "subType": "PPD",
+//        "type": "ACH"
+//    }]""", SampleIsList=true>
 
 //type WebhookSubscriptionRequest = FSharp.Data.JsonProvider<"""[{
 //      "endpointUrl": "http://webhook.com",

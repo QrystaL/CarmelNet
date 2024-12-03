@@ -13,7 +13,7 @@ type Test1() =
     // This is just id from URL of https://webhook.site/
     let webhookSiteGuid = ""
 
-    let webhookTestEndpoint = "https://webhook.site/#!/view/" + webhookSiteGuid
+    let webhookTestEndpoint = "https://webhook.site/" + webhookSiteGuid
     let rnd = System.Random()
 
     [<TestMethod>]
@@ -70,6 +70,7 @@ type Test1() =
         }
         |> Async.RunSynchronously
 
+    /// Note: This test might add some data to the Sandbox environment.
     [<TestMethod>]
     member this.RegisterAndRemoveWebHook() =
         async {
@@ -113,6 +114,7 @@ type Test1() =
         }
         |> Async.RunSynchronously
 
+    /// Note: This test might add some data to the Sandbox environment.
     [<TestMethod>]
     member this.CreateCreditTransferTest() =
         async {
@@ -173,7 +175,7 @@ type Test1() =
                     raise err
                 | Ok res2 ->
                     Assert.IsTrue(res2.Id.IsSome, "Response Id not found")
-                    Assert.AreEqual<String>("approved", resp.Status)
+                    Assert.AreEqual<String>("approved", res2.Status)
 
                 ()
 
@@ -223,6 +225,41 @@ type Test1() =
                 Assert.IsNotNull(resp, "Response not found")
 
                 ()
+
+        }
+        |> Async.RunSynchronously
+
+    [<TestMethod>]
+    member this.WebhookParsingTest() =
+        async {
+
+            // Get this from getWebhookSubscriptionSecret
+            let webhookSecret = "whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw"
+            // Header: svix-id
+            let svix_id = "msg_p5jXN8AQM9LWM0D4loKWxJek"
+            // Header: svix-timestamp
+            let svix_timestamp = "1614265330"
+            // Header: svix-signature
+            let svix_signature = "v1,g0hM9SsE+OTPJTGt/tmIKtSyZlE3uFJELVlNIOLJ1OE="
+            // the raw content of the POST request
+            let payload = "{\"test\": 2432232314}"
+
+            // Tolerance hours to accept expiration. This is just an unit test value.
+            // In real environtment use a figure like 0.5 (after checking possible timezone affections).
+            let acceptedToleranceHours = 300_000.0 // 0.5
+
+            let webhookResponse = CarmelWebhooks.parseWebhookResponse(acceptedToleranceHours, webhookSecret, payload, svix_id, svix_timestamp, svix_signature)
+
+            Assert.IsNotNull(webhookResponse, "Response parsing failed")
+
+            // Main fields will be:
+            // webhookResponse.DateCreated
+            // webhookResponse.Description
+            // webhookResponse.Id
+            // webhookResponse.PaymentOrder.Id
+            // webhookResponse.Type
+
+            return ()
 
         }
         |> Async.RunSynchronously
