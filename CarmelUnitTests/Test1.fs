@@ -1,4 +1,4 @@
-﻿namespace CarmelUnitTests
+namespace CarmelUnitTests
 
 open System
 open CarmelNet
@@ -13,6 +13,7 @@ type Test1() =
     // This is just id from URL of https://webhook.site/
     let webhookSiteGuid = ""
 
+    let webhookTestEndpoint = "https://webhook.site/#!/view/" + webhookSiteGuid
     let rnd = System.Random()
 
     [<TestMethod>]
@@ -30,7 +31,7 @@ type Test1() =
     member this.GetOriginationAccountTest() =
         async {
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
-            let! origAcc = CarmelPayment.getOriginationAccount (CarmelEnvironment.Sandbox, access_token)
+            let! origAcc = CarmelPayment.getOriginationAccounts (CarmelEnvironment.Sandbox, access_token)
 
             //Assert.IsTrue(origAcc.OriginationAccounts.Length > 0);
 
@@ -54,9 +55,9 @@ type Test1() =
 
             match subscribed with
             | Ok x ->
-                Assert.IsNotNull(x)
+                Assert.IsNotNull x
 
-                if x.Subscriber = null then
+                if isNull x.Subscriber then
                     // Note: For some reason this seems to return null. Use rather CarmelWebhooks.getWebhookSubscription with subscriberId parameter.
                     printfn "No subscriptions found"
                 else
@@ -73,12 +74,11 @@ type Test1() =
     member this.RegisterAndRemoveWebHook() =
         async {
             let webhooks = CarmelWebhooks.webhookEvents
-            let endpoint = "https://webhook.site/#!/view/" + webhookSiteGuid
 
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
 
             let! subscribed =
-                CarmelWebhooks.createWebhookSubscription (CarmelEnvironment.Sandbox, access_token, endpoint, webhooks)
+                CarmelWebhooks.createWebhookSubscription (CarmelEnvironment.Sandbox, access_token, webhookTestEndpoint, webhooks)
 
             let subscriberId =
                 match subscribed with
@@ -95,20 +95,21 @@ type Test1() =
 
             Assert.IsFalse(String.IsNullOrEmpty webhookSecret, "Webhook secret not found")
 
-            printfn "Webhook %O wired to: %s with secret %s" subscriberId endpoint webhookSecret
+            printfn "Webhook %O wired to: %s with secret %s" subscriberId webhookTestEndpoint webhookSecret
 
-        //let! deleted = CarmelWebhooks.deleteWebhookSubscription(CarmelEnvironment.Sandbox, access_token, subscriberId)
+            let! deleted =
+                CarmelWebhooks.deleteWebhookSubscription (CarmelEnvironment.Sandbox, access_token, subscriberId)
 
-        //let delResp =
-        //    match deleted with
-        //    | Ok x ->
-        //        Assert.IsFalse(String.IsNullOrEmpty (x.ToString()), "Webhook subscription not found")
-        //        x
-        //    | Error (err, txt) ->
-        //        printfn "Error deleting webhook: %s" txt
-        //        raise err
+            let delResp =
+                match deleted with
+                | Ok x ->
+                    Assert.IsFalse(String.IsNullOrEmpty(x.ToString()), "Webhook subscription not found")
+                    x
+                | Error(err, txt) ->
+                    printfn "Error deleting webhook: %s" txt
+                    raise err
 
-        //()
+            return ()
         }
         |> Async.RunSynchronously
 
@@ -118,7 +119,7 @@ type Test1() =
             let paymentId = rnd.NextInt64(100_000, 999_999).ToString()
 
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
-            let! origAccs = CarmelPayment.getOriginationAccount (CarmelEnvironment.Sandbox, access_token)
+            let! origAccs = CarmelPayment.getOriginationAccounts (CarmelEnvironment.Sandbox, access_token)
 
             let paymentAccIc =
                 match origAccs with
@@ -185,23 +186,38 @@ type Test1() =
         async {
 
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
-            let! origAccs = CarmelPayment.getOriginationAccount (CarmelEnvironment.Sandbox, access_token)
-
-            let paymentAccIc =
-                match origAccs with
-                | Ok acc ->
-                    let firstAcc = (acc |> Seq.head)
-                    firstAcc.Id.Value
-                | Error(err, txt) ->
-                    printfn "Error fetching orig account: %s" txt
-                    raise err
 
             let pageId = 1
-            let! creditTransfer = CarmelPayment.fetchCreditTransfers (CarmelEnvironment.Sandbox, access_token, pageId)
+
+            let! creditTransfer =
+                CarmelPayment.fetchCreditTransfers (CarmelEnvironment.Sandbox, access_token, pageId, None, None, None)
 
             match creditTransfer with
             | Error(err, txt) ->
                 printfn "Error fetching credit transfers: %s" txt
+                raise err
+            | Ok resp ->
+                Assert.IsNotNull(resp, "Response not found")
+
+                ()
+
+        }
+        |> Async.RunSynchronously
+
+    [<TestMethod>]
+    member this.FetchEventsTest() =
+        async {
+
+            let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
+
+            let pageId = 1
+
+            let! creditTransfer =
+                CarmelPayment.fetchEvents (CarmelEnvironment.Sandbox, access_token, pageId, None, None, None)
+
+            match creditTransfer with
+            | Error(err, txt) ->
+                printfn "Error fetching events: %s" txt
                 raise err
             | Ok resp ->
                 Assert.IsNotNull(resp, "Response not found")

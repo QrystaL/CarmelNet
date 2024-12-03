@@ -7,7 +7,7 @@ To get access token, call: CarmelPayment.getAcccessToken
 
 To register a new webhook, call: CarmelWebhooks.createWebhookSubscription
 
-To get a list of origination accounts, call: CarmelPayment.getOriginationAccount
+To get a list of origination accounts, call: CarmelPayment.getOriginationAccounts
 
 Then to create payments, call: CarmelPayment.createCreditTransfer
 

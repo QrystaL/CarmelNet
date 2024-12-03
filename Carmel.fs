@@ -1,4 +1,4 @@
-﻿namespace CarmelNet
+namespace CarmelNet
 
 open System
 open System.Net.Http
@@ -137,7 +137,7 @@ module internal Utils =
         req.ProtocolVersion <- HttpVersion.Version10
 
         let postBytes =
-            if requestBody <> null then
+            if not (isNull requestBody) then
                 let postBytesData = requestBody |> System.Text.Encoding.ASCII.GetBytes
                 req.ContentLength <- postBytesData.LongLength
                 postBytesData
@@ -280,7 +280,7 @@ module CarmelPayment =
                     return failwith $"No access_token gotten {tokenResponse}"
         }
 
-    let getOriginationAccount (env: CarmelEnvironment, access_token: CarmelAccessToken) =
+    let getOriginationAccounts (env: CarmelEnvironment, access_token: CarmelAccessToken) =
         let httpClient = makeHttpClient env access_token
         let client = JsonData.CarmelOpenApi.Client httpClient
 
@@ -488,10 +488,19 @@ module CarmelPayment =
                 return Error(err, details)
         }
 
-    let fetchCreditTransfers (env: CarmelEnvironment, access_token: CarmelAccessToken, pageId) =
+    let fetchCreditTransfers
+        (
+            env: CarmelEnvironment,
+            access_token: CarmelAccessToken,
+            pageId,
+            orderStatus: Option<string>,
+            startDate: Option<DateTime>,
+            endDate: Option<DateTime>
+        ) =
 
         let httpClient = makeHttpClient env access_token
         let client = JsonData.CarmelOpenApi.Client httpClient
+        let pgSize = 30 // Page size: Little bit more than default 10, but not too heavy load
 
         async {
 
@@ -501,7 +510,46 @@ module CarmelPayment =
                 else
                     None
 
-            let! res = client.GetApiV1PaymentOrders(pageId) |> Async.Catch
+            let! res =
+                match orderStatus, startDate, endDate with
+                | Some ost, Some std, Some edd ->
+                    client.GetApiV1PaymentOrders(
+                        pageId,
+                        ost,
+                        std.ToString("yyyy-MM-dd"),
+                        edd.ToString("yyyy-MM-dd"),
+                        Some pgSize
+                    )
+                    |> Async.Catch
+                | Some ost, Some std, None ->
+                    client.GetApiV1PaymentOrders(pageId, ost, std.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | Some ost, None, Some edd ->
+                    client.GetApiV1PaymentOrders(
+                        pageId,
+                        ost,
+                        endDate = edd.ToString("yyyy-MM-dd"),
+                        pageSize = Some pgSize
+                    )
+                    |> Async.Catch
+                | Some ost, None, None ->
+                    client.GetApiV1PaymentOrders(pageId, ost, pageSize = Some pgSize) |> Async.Catch
+                | None, Some std, Some edd ->
+                    client.GetApiV1PaymentOrders(
+                        pageId,
+                        startDate = std.ToString("yyyy-MM-dd"),
+                        endDate = edd.ToString("yyyy-MM-dd"),
+                        pageSize = Some pgSize
+                    )
+                    |> Async.Catch
+                | None, Some std, None ->
+                    client.GetApiV1PaymentOrders(pageId, startDate = std.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | None, None, Some edd ->
+                    client.GetApiV1PaymentOrders(pageId, endDate = edd.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | None, None, None -> client.GetApiV1PaymentOrders(pageId, pageSize = Some pgSize) |> Async.Catch
+
             httpClient.Dispose()
 
             if subscription.IsSome then
@@ -560,10 +608,19 @@ module CarmelPayment =
         }
 
 
-    let fetchEvents (env: CarmelEnvironment, access_token: CarmelAccessToken, page: int) =
+    let fetchEvents
+        (
+            env: CarmelEnvironment,
+            access_token: CarmelAccessToken,
+            pageId: int,
+            eventType: Option<string>,
+            startDate: Option<DateTime>,
+            endDate: Option<DateTime>
+        ) =
 
         let httpClient = makeHttpClient env access_token
         let client = JsonData.CarmelOpenApi.Client httpClient
+        let pgSize = 30 // Page size: Little bit more than default 10, but not too heavy load
 
         async {
 
@@ -573,7 +630,40 @@ module CarmelPayment =
                 else
                     None
 
-            let! res = client.GetApiV1Events page |> Async.Catch
+            let! res =
+                match eventType, startDate, endDate with
+                | Some et, Some std, Some edd ->
+                    client.GetApiV1Events(
+                        pageId,
+                        et,
+                        std.ToString("yyyy-MM-dd"),
+                        edd.ToString("yyyy-MM-dd"),
+                        Some pgSize
+                    )
+                    |> Async.Catch
+                | Some et, Some std, None ->
+                    client.GetApiV1Events(pageId, et, std.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | Some et, None, Some edd ->
+                    client.GetApiV1Events(pageId, et, endDate = edd.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | Some et, None, None -> client.GetApiV1Events(pageId, et, pageSize = Some pgSize) |> Async.Catch
+                | None, Some std, Some edd ->
+                    client.GetApiV1Events(
+                        pageId,
+                        startDate = std.ToString("yyyy-MM-dd"),
+                        endDate = edd.ToString("yyyy-MM-dd"),
+                        pageSize = Some pgSize
+                    )
+                    |> Async.Catch
+                | None, Some std, None ->
+                    client.GetApiV1Events(pageId, startDate = std.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | None, None, Some edd ->
+                    client.GetApiV1Events(pageId, endDate = edd.ToString("yyyy-MM-dd"), pageSize = Some pgSize)
+                    |> Async.Catch
+                | None, None, None -> client.GetApiV1Events(pageId, pageSize = Some pgSize) |> Async.Catch
+
             httpClient.Dispose()
 
             if subscription.IsSome then
@@ -796,7 +886,7 @@ module CarmelWebhooks =
                 let wr =
                     JsonData.WebhookSubscriptionSecretResponse.Load(Serializer.Deserialize webhookresp)
 
-                return wr.Secret // But where is the secret??
+                return wr.Secret
         }
 
 //let getWebhookSubscriptionSecret (env:CarmelEnvironment, access_token:CarmelAccessToken, subscriberId:Guid) =
