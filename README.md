@@ -1,9 +1,9 @@
-Un-official .NET client for [Carmel](https://www.carmelsolutions.com/), making bank payments in US.
+Unofficial .NET client for [Carmel](https://www.carmelsolutions.com/), making bank payments in the US.
 
 Complete API documentation: https://docs.carmelsolutions.com/
 
 
-To get access token, call: CarmelPayment.getAcccessToken
+To get an access token, call: CarmelPayment.getAcccessToken
 
 To register a new webhook, call: CarmelWebhooks.createWebhookSubscription
 
@@ -15,6 +15,8 @@ And to approve the payments, call: CarmelPayment.approveCreditTransfer
 
 To verify the webhook signatures and parse the response: CarmelWebhooks.parseWebhookResponse
 
-See the unit-tests for examples.
+When processing a webhook, fetch the details via: CarmelPayment.fetchCreditTransfer
+
+See the unit tests for examples.
 
 Nuget: https://www.nuget.org/packages/CarmelNet
