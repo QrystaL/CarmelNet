@@ -5,11 +5,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Tuomas Hietanen</Authors>
     <Company>Welendus</Company>
-    <PackageTags>Carmel Carmelsolutions .NET client bank integration payments online payment library transaction api bank us automation america united-states banking gateway ACH Wire debit credit SEC WEB PPD CCD</PackageTags>
+    <PackageTags>Carmel Carmelsolutions .NET client bank integration payments online payment library transaction api us automation america united-states banking gateway ACH Wiretransfer debit credit SEC WEB PPD CCD</PackageTags>
     <Version>0.3</Version>
     <Description>
       Unofficial .NET client for Carmel integration, creating online payments via their API.
-      Bank payment handling automation in United States.
+      Bank payment handling automation in the United States.
     </Description>
     <RepositoryUrl>https://github.com/Thorium/CarmelNet.git</RepositoryUrl>
     <PackageId>CarmelNet</PackageId>
