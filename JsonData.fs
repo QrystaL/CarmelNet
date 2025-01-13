@@ -1,3 +1,4 @@
+[<RequireQualifiedAccess>]
 module JsonData
 
 // The commented types here are, because the Carmel Open API schema file doesn't always 100% correspond to the actual implementation.
@@ -401,7 +402,7 @@ module JsonData
 //        "path": "/status"
 //    }]""", SampleIsList=true>
 
-type WebhookResponse =
+type internal WebhookResponseRaw =
     FSharp.Data.JsonProvider<"""[{
           "dateCreated": "2022-12-29T22:30:04.1700000Z",
           "description": "Payment Order requires approval.",
@@ -454,6 +455,90 @@ type WebhookResponse =
           "id": "0adb8f6a-fbe1-4a0d-8458-e38df1a74bdd",
           "paymentOrder": {
             "id": "9ab86b30-84c7-40e7-263c-08dae9ec3b12"
+          },
+          "type": "corrected"
+        },{
+          "correction": {
+            "code": "C02",
+            "correctedData": {
+              "routingNumber": "021000021"
+            },
+            "dateCorrected": "2024-04-10T15:47:11.2300000Z",
+            "description": "Incorrect Routing Number"
+          },
+          "dateCreated": "2024-04-10T15:47:11.6730000Z",
+          "description": "Payment Order has been corrected.",
+          "id": "182a65c3-4968-4aeb-ae7c-a8f74fb8cd5c",
+          "paymentOrder": {
+            "id": "3e556ce7-7de0-43e7-8cc2-2d3dec4411c4"
+          },
+          "type": "corrected"
+        },{
+          "correction": {
+            "code": "C03",
+            "correctedData": {
+              "accountNumber": "3941222237",
+              "routingNumber": "107005076"
+            },
+            "dateCorrected": "2024-04-10T15:47:11.2300000Z",
+            "description": "Incorrect Routing Number and Incorrect DFI Account Number"
+          },
+          "dateCreated": "2024-04-10T15:47:11.6730000Z",
+          "description": "Payment Order has been corrected.",
+          "id": "08150d13-09c8-491e-b22c-90e680161c5d",
+          "paymentOrder": {
+            "id": "2fb83c2a-4a63-41ce-9894-6a0f0fbb3f49"
+          },
+          "type": "corrected"
+        },{
+          "correction": {
+            "code": "C05",
+            "correctedData": {
+              "transactionCode": "37"
+            },
+            "dateCorrected": "2024-04-10T15:47:11.2300000Z",
+            "description": "Incorrect Transaction Code"
+          },
+          "dateCreated": "2024-04-10T15:47:11.6730000Z",
+          "description": "Payment Order has been corrected.",
+          "id": "9370a9f2-a376-4f00-8e9f-c8fedd91365e",
+          "paymentOrder": {
+            "id": "d8299619-8990-4c0e-837e-456e00b4a236"
+          },
+          "type": "corrected"
+        },{
+          "correction": {
+            "code": "C06",
+            "correctedData": {
+              "accountNumber": "1000091331506",
+              "transactionCode": "37"
+            },
+            "dateCorrected": "2024-04-10T15:47:11.2300000Z",
+            "description": "Incorrect DFI Account Number and Incorrect Transaction Code"
+          },
+          "dateCreated": "2024-04-10T15:47:11.6730000Z",
+          "description": "Payment Order has been corrected.",
+          "id": "3609e51a-5e0e-4de3-b14b-733a2956c344",
+          "paymentOrder": {
+            "id": "b703510c-150c-49ff-93f5-4413a12a2b30"
+          },
+          "type": "corrected"
+        },{
+          "correction": {
+            "code": "C07",
+            "correctedData": {
+              "accountNumber": "0005159789599",
+              "routingNumber": "055003337",
+              "transactionCode": "22"
+            },
+            "dateCorrected": "2024-04-10T15:47:11.2300000Z",
+            "description": "Incorrect Routing Number, Incorrect DFI Account Number, and Incorrect Transaction Code"
+          },
+          "dateCreated": "2024-04-10T15:47:11.6730000Z",
+          "description": "Payment Order has been corrected.",
+          "id": "037eea5d-a8be-452a-a703-a30f06863b89",
+          "paymentOrder": {
+            "id": "79d705d4-8fbe-486d-9adc-988b79772e7d"
           },
           "type": "corrected"
         },{
@@ -630,7 +715,7 @@ type WebhookResponse =
 //  }
 //}]""", SampleIsList=true>
 
-type WebhookSubscriptionSecretResponse =
+type internal WebhookSubscriptionSecretResponseRaw =
     FSharp.Data.JsonProvider<"""[{
         "secret": "whsec_123jeR21MNm1NW2d18W0m1exMP123/2u"
     }
