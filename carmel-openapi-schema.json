@@ -881,7 +881,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/GetSubscriberResponse"
+                                    "$ref": "#/components/schemas/GetSubscribersResponse"
                                 }
                             }
                         }
@@ -1640,6 +1640,20 @@
                 "properties": {
                     "subscriber": {
                         "$ref": "#/components/schemas/WebHookSubscriber"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GetSubscribersResponse": {
+                "type": "object",
+                "properties": {
+                    "subscribers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WebHookSubscriber"
+                        },
+                        "description": "Subscribers",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false

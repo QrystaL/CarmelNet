@@ -54,15 +54,18 @@ type Test1() =
             let! subscribed = CarmelWebhooks.getWebhookSubscriptions (CarmelEnvironment.Sandbox, access_token)
 
             match subscribed with
-            | Ok x ->
-                Assert.IsNotNull x
-
-                if isNull x.Subscriber then
-                    // Note: For some reason this seems to return null. Use rather CarmelWebhooks.getWebhookSubscription with subscriberId parameter.
+            | Ok xs ->
+                Assert.IsNotNull xs
+                Assert.IsNotNull xs.Subscribers
+                if xs.Subscribers.Length = 0 then
                     printfn "No subscriptions found"
-                else
-                    printfn "Subscription found: %s" (x.Subscriber.ToString())
 
+                xs.Subscribers |> Seq.iter(fun x ->
+                    if isNull x.EndpointUrl then
+                        printfn "Null endpoint found"
+                    else
+                        printfn "Subscription found: %s status %s id %s" x.EndpointUrl x.Status (match x.Id with | Some y -> y.ToString() | None -> "None")
+                )
             | Error(err, txt) ->
                 printfn "Error getting webhooks: %s" txt
                 raise err
