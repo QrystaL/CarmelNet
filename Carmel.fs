@@ -183,6 +183,8 @@ module internal Utils =
             if not (String.IsNullOrEmpty h) then
                 if h.ToLower() = "user-agent" then
                     req.UserAgent <- k
+                elif h.ToLower() = "accept" then
+                    req.Accept <- k
                 else
                     req.Headers.Add(h, k))
 
