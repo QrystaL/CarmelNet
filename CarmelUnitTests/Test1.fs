@@ -210,6 +210,29 @@ type Test1() =
         |> Async.RunSynchronously
 
     [<TestMethod>]
+    member this.FetchCreditTransferTest() =
+        async {
+            let paymentOrderId = Guid "1233c6c2-1236-4410-123d-123569fd6d12"
+            let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
+
+            let! creditTransfer =
+                CarmelPayment.fetchCreditTransfer (CarmelEnvironment.Sandbox, access_token, paymentOrderId)
+
+            match creditTransfer with
+            | Error(err, txt) ->
+                if txt <> "One or more errors occurred. (Not Found)" then
+                    printfn "Error fetching credit transfers: %s" txt
+                    raise err
+                else ()
+            | Ok resp ->
+                Assert.IsNotNull(resp, "Response not found")
+
+                ()
+
+        }
+        |> Async.RunSynchronously
+
+    [<TestMethod>]
     member this.FetchEventsTest() =
         async {
 

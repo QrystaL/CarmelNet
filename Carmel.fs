@@ -370,7 +370,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
 
@@ -494,6 +494,7 @@ module CarmelPayment =
                     failwith "Wire transfer: Address 1 has to be defined."
             | Some a -> targetAccount.Address1 <- a
 
+            let suplementdata = Map ["ExternalId", paymentId]
             let createPaymentOrder =
                 JsonData.CarmelOpenApi.CreatePaymentOrder(
                     amountCents,
@@ -502,7 +503,7 @@ module CarmelPayment =
                     transferType.ToString(),
                     direction.ToString(),
                     targetAccount,
-                    Map.empty //, suplementdata
+                    suplementdata
                 //, subtype
                 )
 
@@ -524,7 +525,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Get the status of a money transfer
@@ -553,7 +554,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Get a list of money transfer transactions
@@ -630,7 +631,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Change a money transfer from approval required to aproved (or cancelled)
@@ -674,7 +675,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Get list of events
@@ -745,7 +746,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
 module CarmelWebhooks =
@@ -836,7 +837,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     //let deleteWebhookSubscription (env:CarmelEnvironment, access_token:CarmelAccessToken, subscriberId:Guid) =
@@ -881,7 +882,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
 
@@ -927,7 +928,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Fetch details of a webhook listener
@@ -956,7 +957,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, details)
+                return Error(err, (if details = "" then err.Message else details))
         }
 
     /// Get a webhook listener secret, that is used to calculate and verify the webhook svix signatures.
@@ -1000,7 +1001,7 @@ module CarmelWebhooks =
 //            let details = getErrorDetails err
 
 //            //printfn "Used signature: %s" signature_bodyhash_string
-//            return Error(err, details)
+//            return Error(err, (if details = "" then err.Message else details))
 //    }
 
     
