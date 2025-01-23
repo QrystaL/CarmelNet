@@ -275,6 +275,9 @@ module internal Utils =
 
     let rec internal getErrorDetails: Exception -> string =
         function
+        | :? Swagger.OpenApiException as e ->
+            let content = e.Content.ReadAsStringAsync() |> Async.AwaitTask |> Async.RunSynchronously
+            content
         | :? AggregateException as aex -> getErrorDetails (aex.GetBaseException())
         | :? WebException as wex when not (isNull (wex.Response)) ->
             use stream = wex.Response.GetResponseStream()
@@ -282,7 +285,7 @@ module internal Utils =
             let err = reader.ReadToEnd()
             err
         | :? TimeoutException as e -> "Timeout"
-        | _ -> ""
+        | e -> e.Message
 
     let mutable logUnsuccessfulHandler: Option<System.Net.HttpStatusCode * string -> Unit> =
         None
@@ -370,7 +373,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
 
@@ -525,7 +528,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Get the status of a money transfer
@@ -554,7 +557,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Get a list of money transfer transactions
@@ -631,7 +634,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Change a money transfer from approval required to aproved (or cancelled)
@@ -675,7 +678,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Get list of events
@@ -746,7 +749,7 @@ module CarmelPayment =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
 module CarmelWebhooks =
@@ -837,7 +840,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     //let deleteWebhookSubscription (env:CarmelEnvironment, access_token:CarmelAccessToken, subscriberId:Guid) =
@@ -882,7 +885,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
 
@@ -928,7 +931,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Fetch details of a webhook listener
@@ -957,7 +960,7 @@ module CarmelWebhooks =
                 let details = getErrorDetails err
 
                 //printfn "Used signature: %s" signature_bodyhash_string
-                return Error(err, (if details = "" then err.Message else details))
+                return Error(err, details)
         }
 
     /// Get a webhook listener secret, that is used to calculate and verify the webhook svix signatures.
@@ -1001,7 +1004,7 @@ module CarmelWebhooks =
 //            let details = getErrorDetails err
 
 //            //printfn "Used signature: %s" signature_bodyhash_string
-//            return Error(err, (if details = "" then err.Message else details))
+//            return Error(err, details)
 //    }
 
     

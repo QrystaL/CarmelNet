@@ -6,7 +6,7 @@
     <Authors>Tuomas Hietanen</Authors>
     <Company>Welendus</Company>
     <PackageTags>Carmel Carmelsolutions .NET client bank integration payments online payment library transaction api us automation america united-states banking gateway ACH Wiretransfer debit credit SEC WEB PPD CCD</PackageTags>
-    <Version>0.8</Version>
+    <Version>0.9</Version>
     <Description>
       Unofficial .NET client for Carmel integration, creating online payments via their API.
       Bank payment handling automation in the United States.
