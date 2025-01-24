@@ -15,6 +15,7 @@ type Test1() =
 
     let webhookTestEndpoint = "https://webhook.site/" + webhookSiteGuid
     let rnd = System.Random()
+    let mutable testPaymentOrderId = Guid "1233c6c2-1236-4410-123d-123569fd6d12"
 
     [<TestMethod>]
     member this.AuthTest() =
@@ -121,7 +122,7 @@ type Test1() =
     [<TestMethod>]
     member this.CreateCreditTransferTest() =
         async {
-            let paymentId = rnd.NextInt64(100_000, 999_999).ToString()
+            let paymentCorrelationId = rnd.NextInt64(100_000, 999_999).ToString()
 
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
             let! origAccs = CarmelPayment.getOriginationAccounts (CarmelEnvironment.Sandbox, access_token)
@@ -140,7 +141,7 @@ type Test1() =
                     CarmelEnvironment.Sandbox,
                     access_token,
                     paymentAccIc,
-                    paymentId,
+                    paymentCorrelationId,
                     100,
                     CarmelTransferType.ACH CarmelSecCode.PPD,
                     CarmelTransferDirection.Debit,
@@ -163,6 +164,7 @@ type Test1() =
 
                 Assert.AreEqual<String>("approvalRequired", resp.Status)
                 let paymentOrderId = resp.Id.Value
+                testPaymentOrderId <- paymentOrderId
 
                 let! approval =
                     CarmelPayment.approveCreditTransfer (
@@ -212,8 +214,10 @@ type Test1() =
     [<TestMethod>]
     member this.FetchCreditTransferTest() =
         async {
-            let paymentOrderId = Guid "1233c6c2-1236-4410-123d-123569fd6d12"
+
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
+
+            let paymentOrderId = testPaymentOrderId
 
             let! creditTransfer =
                 CarmelPayment.fetchCreditTransfer (CarmelEnvironment.Sandbox, access_token, paymentOrderId)
