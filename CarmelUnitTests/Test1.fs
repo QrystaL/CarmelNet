@@ -253,9 +253,10 @@ type Test1() =
                 raise err
             | Ok resp ->
                 Assert.IsNotNull(resp, "Response not found")
-
-                ()
-
+                
+                resp.Results |> Seq.iter(fun e ->
+                    printfn $"Event: {e.Type} for payment {e.PaymentOrder} at {e.DateCreated}"
+                )
         }
         |> Async.RunSynchronously
 
