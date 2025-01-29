@@ -102,6 +102,9 @@ type Test1() =
 
             printfn "Webhook %O wired to: %s with secret %s" subscriberId webhookTestEndpoint webhookSecret
 
+            if webhookTestEndpoint.StartsWith "https://webhook.site/" then
+                printfn "Watch webhooks at https://webhook.site/#!/view/%O" webhookSiteGuid
+
             let! deleted =
                 CarmelWebhooks.deleteWebhookSubscription (CarmelEnvironment.Sandbox, access_token, subscriberId)
 
@@ -122,6 +125,18 @@ type Test1() =
     [<TestMethod>]
     member this.CreateCreditTransferTest() =
         async {
+
+            // With different destination accounts you can cause different processes (and webhooks) to be tested.
+            // https://docs.carmelsolutions.com/reference/introduction-1
+            let destinationAccount =
+                // "R01"            // ACH Return Simulation
+                // "C01"            // ACH Correction
+                // "uncorrected"    // ACH Failure
+                // "remit"          // Remittance Simulations: remit (accept money transfer)
+                // "remitreturn"    // Remittance Simulations: remit then return
+                // "remitreturn"    // Remittance Simulations: return then remit
+                "1234567"
+
             let paymentCorrelationId = rnd.NextInt64(100_000, 999_999).ToString()
 
             let! access_token = CarmelPayment.getAcccessToken (CarmelEnvironment.Sandbox, clientId, clientSecret)
@@ -146,7 +161,7 @@ type Test1() =
                     CarmelTransferType.ACH CarmelSecCode.PPD,
                     CarmelTransferDirection.Debit,
                     "091809524",
-                    "1234567",
+                    destinationAccount,
                     "Tuomas Testing",
                     CarmelBankAccountType.Checking,
                     None
