@@ -15,7 +15,7 @@ type Test1() =
 
     let webhookTestEndpoint = "https://webhook.site/" + webhookSiteGuid
     let rnd = System.Random()
-    let mutable testPaymentOrderId = Guid "1233c6c2-1236-4410-123d-123569fd6d12"
+    let testPaymentOrderId = Guid "9bb533fc-bbaf-4a3e-ab60-c10d7b944b26"
 
     [<TestMethod>]
     member this.AuthTest() =
@@ -179,7 +179,6 @@ type Test1() =
 
                 Assert.AreEqual<String>("approvalRequired", resp.Status)
                 let paymentOrderId = resp.Id.Value
-                testPaymentOrderId <- paymentOrderId
 
                 let! approval =
                     CarmelPayment.approveCreditTransfer (
