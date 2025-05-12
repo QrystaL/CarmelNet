@@ -135,7 +135,6 @@ type CarmelPaymentOrderType =
     | Cancelled
 
     override this.ToString() =
-        "paymentOrder_" +
         match this with
         | ApprovalRequired -> PaymentOrderType.ApprovalRequired
         | Approved -> PaymentOrderType.Approved
@@ -145,6 +144,9 @@ type CarmelPaymentOrderType =
         | Remitted -> PaymentOrderType.Remitted
         | Failed -> PaymentOrderType.Failed
         | Cancelled -> PaymentOrderType.Cancelled
+
+    member this.ToWebHookEvent() =
+        "paymentOrder_" + this.ToString()
 
 module internal Utils =
 
@@ -763,7 +765,7 @@ module CarmelWebhooks =
     /// List of different types of webhooks
     let webhookEvents =
         Microsoft.FSharp.Reflection.FSharpType.GetUnionCases(typeof<CarmelPaymentOrderType>)
-        |> Array.map(fun x -> (Microsoft.FSharp.Reflection.FSharpValue.MakeUnion(x, [||]) :?> CarmelPaymentOrderType).ToString())
+        |> Array.map(fun x -> (Microsoft.FSharp.Reflection.FSharpValue.MakeUnion(x, [||]) :?> CarmelPaymentOrderType).ToWebHookEvent())
 
     //let createWebhookSubscription (env:CarmelEnvironment, access_token:CarmelAccessToken, endpointUrl:string, webhookEvents:string[]) =
     //    let subscribeRequest =
