@@ -117,22 +117,23 @@ module PaymentOrderType =
 
 [<RequireQualifiedAccess>]
 type CarmelPaymentOrderType =
-/// paymentOrder_approvalRequired: This event occurs when a payment order is created through the REST API
-| ApprovalRequired
-/// paymentOrder_approved: This event occurs when a payment order is approved through the REST API
-| Approved
-/// paymentOrder_sent: This event occurs when a payment order has completed processing and Carmel has sent the payment order to the originating bank (ODFI).
-| Sent
-/// paymentOrder_returned: This event occurs when we receive an ACH or Wire Return from an RDFI (Receiving Financial Institution). For a credit payment order, the funds are returned to the ODFI. For a Debit payment order, the funds are returned to the RDFI.
-| Returned
-/// paymentOrder_corrected: A corrected event occurs when an ACH NOC (Notice of Correction) is received from an RDFI (receiving bank or credit union). You may receive corrected events for correction codes C01 through C07 (except for C04).
-| Corrected
-/// paymentOrder_remitted: This event occurs when a payment order has been processed for remittance. Where configured, remittance is only applicable for ACH debit payment orders. In brief, it means that funds collected by a debit payment order are "remitted" (transferred) from the collection account to one or more different bank accounts. The remittance process will generate a "remitted" event with a negative remittance.amount value if the payment order was returned.
-| Remitted
-/// paymentOrder_failed: This event occurs when a payment order can no longer be processed. This could be due to an issue with the payment order in our system or with the ODFI. We try hard to avoid this by validating most aspects of a payment order when it is created.
-| Failed
-///paymentOrder_cancelled: This event occurs when a payment order you have cancelled a payment order through the REST API.
-| Cancelled
+    /// paymentOrder_approvalRequired: This event occurs when a payment order is created through the REST API
+    | ApprovalRequired
+    /// paymentOrder_approved: This event occurs when a payment order is approved through the REST API
+    | Approved
+    /// paymentOrder_sent: This event occurs when a payment order has completed processing and Carmel has sent the payment order to the originating bank (ODFI).
+    | Sent
+    /// paymentOrder_returned: This event occurs when we receive an ACH or Wire Return from an RDFI (Receiving Financial Institution). For a credit payment order, the funds are returned to the ODFI. For a Debit payment order, the funds are returned to the RDFI.
+    | Returned
+    /// paymentOrder_corrected: A corrected event occurs when an ACH NOC (Notice of Correction) is received from an RDFI (receiving bank or credit union). You may receive corrected events for correction codes C01 through C07 (except for C04).
+    | Corrected
+    /// paymentOrder_remitted: This event occurs when a payment order has been processed for remittance. Where configured, remittance is only applicable for ACH debit payment orders. In brief, it means that funds collected by a debit payment order are "remitted" (transferred) from the collection account to one or more different bank accounts. The remittance process will generate a "remitted" event with a negative remittance.amount value if the payment order was returned.
+    | Remitted
+    /// paymentOrder_failed: This event occurs when a payment order can no longer be processed. This could be due to an issue with the payment order in our system or with the ODFI. We try hard to avoid this by validating most aspects of a payment order when it is created.
+    | Failed
+    ///paymentOrder_cancelled: This event occurs when a payment order you have cancelled a payment order through the REST API.
+    | Cancelled
+
     override this.ToString() =
         match this with
         | ApprovalRequired -> PaymentOrderType.ApprovalRequired
@@ -143,6 +144,9 @@ type CarmelPaymentOrderType =
         | Remitted -> PaymentOrderType.Remitted
         | Failed -> PaymentOrderType.Failed
         | Cancelled -> PaymentOrderType.Cancelled
+
+    member this.ToWebHookEvent() =
+        "paymentOrder_" + this.ToString()
 
 module internal Utils =
 
@@ -761,7 +765,7 @@ module CarmelWebhooks =
     /// List of different types of webhooks
     let webhookEvents =
         Microsoft.FSharp.Reflection.FSharpType.GetUnionCases(typeof<CarmelPaymentOrderType>)
-        |> Array.map(fun x -> (Microsoft.FSharp.Reflection.FSharpValue.MakeUnion(x, [||]) :?> CarmelPaymentOrderType).ToString())
+        |> Array.map(fun x -> (Microsoft.FSharp.Reflection.FSharpValue.MakeUnion(x, [||]) :?> CarmelPaymentOrderType).ToWebHookEvent())
 
     //let createWebhookSubscription (env:CarmelEnvironment, access_token:CarmelAccessToken, endpointUrl:string, webhookEvents:string[]) =
     //    let subscribeRequest =

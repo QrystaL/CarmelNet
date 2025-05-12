@@ -6,7 +6,7 @@
     <Authors>Tuomas Hietanen</Authors>
     <Company>Welendus</Company>
     <PackageTags>Carmel Carmelsolutions .NET client bank integration payments online payment library transaction api us automation america united-states banking gateway ACH Wiretransfer debit credit SEC WEB PPD CCD</PackageTags>
-    <Version>0.10</Version>
+    <Version>0.11</Version>
     <Description>
       Unofficial .NET client for Carmel integration, creating online payments via their API.
       Bank payment handling automation in the United States.
@@ -29,14 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FSharp.Data" Version="6.4.1" />
-    <PackageReference Include="FSharp.Data.JsonProvider.Serializer" Version="1.0.3" />
-    <PackageReference Include="SwaggerProvider" Version="2.2.2" />
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="FSharp.Data" Version="6.6.0" />
+    <PackageReference Include="FSharp.Data.JsonProvider.Serializer" Version="1.0.4" />
+    <PackageReference Include="SwaggerProvider" Version="2.3.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.101" />
+    <PackageReference Update="FSharp.Core" Version="9.0.202" />
   </ItemGroup>
 
 </Project>
