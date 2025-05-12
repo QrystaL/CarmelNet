@@ -15,6 +15,9 @@ type Test1() =
 
     let webhookTestEndpoint = "https://webhook.site/" + webhookSiteGuid
     let rnd = System.Random()
+
+    // This variable is populated by CreateCreditTransferTest
+    // and then used by FetchCreditTransferTest
     static let mutable testPaymentOrderId = Guid.Empty
 
     [<TestMethod>]
@@ -134,7 +137,7 @@ type Test1() =
                 // "uncorrected"    // ACH Failure
                 // "remit"          // Remittance Simulations: remit (accept money transfer)
                 // "remitreturn"    // Remittance Simulations: remit then return
-                // "remitreturn"    // Remittance Simulations: return then remit
+                // "returnremit"    // Remittance Simulations: return then remit
                 "1234567"
 
             let paymentCorrelationId = rnd.NextInt64(100_000, 999_999).ToString()

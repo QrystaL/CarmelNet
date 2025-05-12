@@ -115,6 +115,9 @@ module PaymentOrderType =
     [<Literal>]
     let Cancelled = "cancelled"
 
+/// Types of payment order.
+/// Annoyingly API uses 2 different forms: with and without a prefix of paymentOrder_
+/// so you have to be extra careful.
 [<RequireQualifiedAccess>]
 type CarmelPaymentOrderType =
     /// paymentOrder_approvalRequired: This event occurs when a payment order is created through the REST API
@@ -131,9 +134,11 @@ type CarmelPaymentOrderType =
     | Remitted
     /// paymentOrder_failed: This event occurs when a payment order can no longer be processed. This could be due to an issue with the payment order in our system or with the ODFI. We try hard to avoid this by validating most aspects of a payment order when it is created.
     | Failed
-    ///paymentOrder_cancelled: This event occurs when a payment order you have cancelled a payment order through the REST API.
+    /// paymentOrder_cancelled: This event occurs when a payment order you have cancelled a payment order through the REST API.
     | Cancelled
 
+    /// PaymentOrderType.Type as string, without prefix of "paymentOrder_".
+    /// As used in the actual JSON return of a webhook type code, e.g. { "type": "approvalRequired", ... }
     override this.ToString() =
         match this with
         | ApprovalRequired -> PaymentOrderType.ApprovalRequired
@@ -145,6 +150,8 @@ type CarmelPaymentOrderType =
         | Failed -> PaymentOrderType.Failed
         | Cancelled -> PaymentOrderType.Cancelled
 
+    /// PaymentOrderType.Type with a "paymentOrder_" prefix.
+    /// As used in WebApi, events like registering subscriptions to webhooks.
     member this.ToWebHookEvent() =
         "paymentOrder_" + this.ToString()
 
